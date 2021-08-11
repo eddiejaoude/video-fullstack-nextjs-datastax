@@ -1,8 +1,49 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Form,
+  Button,
+} from "react-bootstrap";
 
 export default function Home() {
+  const [members, setMembers] = useState([]);
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [github, setGitHub] = useState("");
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/members")
+      .then((response) => response.json())
+      .then((members) => setMembers(members));
+  }, []);
+
+  const submitSave = (e) => {
+    e.preventDefault();
+    fetch("http://localhost:3000/api/members", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, location, github }),
+    })
+      .then((response) => response.json())
+      .then((member) => setMembers(members.concat(member)));
+  };
+
+  const submitSearch = (e) => {
+    e.preventDefault();
+    fetch(`http://localhost:3000/api/members?keyword=${keyword}`)
+      .then((response) => response.json())
+      .then((members) => setMembers(members));
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,44 +53,55 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <Form inline>
+          <InputGroup>
+            <FormControl
+              type="text"
+              placeholder="Keyword"
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+            <InputGroup.Append>
+              <Button variant="outline-secondary" onClick={submitSearch}>
+                Search
+              </Button>
+            </InputGroup.Append>
+          </InputGroup>
+        </Form>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+        <h1 className={styles.title}>Welcome to EddieHub!</h1>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+        <Form inline>
+          <InputGroup>
+            <FormControl
+              type="text"
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <FormControl
+              type="text"
+              placeholder="Location"
+              onChange={(e) => setLocation(e.target.value)}
+            />
+            <FormControl
+              type="text"
+              placeholder="GitHub"
+              onChange={(e) => setGitHub(e.target.value)}
+            />
+            <InputGroup.Append>
+              <Button variant="outline-secondary" onClick={submitSave}>
+                Save
+              </Button>
+            </InputGroup.Append>
+          </InputGroup>
+        </Form>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <ListGroup>
+          {members.map((member) => (
+            <ListGroup.Item key={member.id}>
+              {member.name}, {member.location}, {member.github}
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
       </main>
 
       <footer className={styles.footer}>
@@ -58,12 +110,12 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
