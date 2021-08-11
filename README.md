@@ -6,7 +6,7 @@
 ## Tools
 
 - [NextJS](http://nextjs.org)
-- [DataStax](http://links.eddiejaoude.io/t/TaNk0FI7zBa4)
+- [DataStax](http://links.eddiejaoude.io/t/Lds9CczASUCp)
 
 ## Quickstart
 
