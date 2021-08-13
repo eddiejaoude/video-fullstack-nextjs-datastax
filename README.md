@@ -10,6 +10,6 @@
 
 ## Quickstart
 
-1. npm install
-2. npm run dev
+1. Install dependencies `npm install`
+2. Start the application `npm run dev`
 3. Open http://localhost:3000
